@@ -1,0 +1,71 @@
+# CircleCI Configuration - Azure Container Instances Deployment
+# Copy this file to .circleci/config.yml to use it
+# Required Environment Variables (set in CircleCI Project Settings):
+#   - AZURE_SP_APP_ID: Service principal app ID
+#   - AZURE_SP_PASSWORD: Service principal password
+#   - AZURE_SP_TENANT: Azure tenant ID
+#   - AZURE_RESOURCE_GROUP: Azure resource group
+#   - AZURE_REGISTRY_NAME: Azure Container Registry name
+
+version: 2.1
+
+orbs:
+  azure-cli: circleci/azure-cli@1.3.2
+
+jobs:
+  test:
+    docker:
+      - image: cimg/python:3.11
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: pip install -r requirements.txt
+      - run:
+          name: Run tests
+          command: |
+            pytest test_app.py -v
+            echo "✓ Tests passed"
+
+  deploy-to-azure:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - setup_remote_docker
+      - azure-cli/install
+      - azure-cli/login-with-service-principal
+      - run:
+          name: Build and push to Azure Container Registry
+          command: |
+            az acr build --registry ${AZURE_REGISTRY_NAME} \
+              --image hackathon-app:${CIRCLE_SHA1} \
+              --image hackathon-app:latest \
+              --file Dockerfile .
+            echo "✓ Image pushed to ACR"
+      - run:
+          name: Deploy to Azure Container Instances
+          command: |
+            az container create \
+              --resource-group ${AZURE_RESOURCE_GROUP} \
+              --name hackathon-app \
+              --image ${AZURE_REGISTRY_NAME}.azurecr.io/hackathon-app:latest \
+              --registry-login-server ${AZURE_REGISTRY_NAME}.azurecr.io \
+              --registry-username ${AZURE_SP_APP_ID} \
+              --registry-password ${AZURE_SP_PASSWORD} \
+              --dns-name-label hackathon-app-${CIRCLE_BUILD_NUM} \
+              --ports 5000
+            echo "✓ Deployed to Azure Container Instances"
+
+workflows:
+  version: 2
+  build-test-deploy:
+    jobs:
+      - test
+      - deploy-to-azure:
+          requires:
+            - test
+          filters:
+            branches:
+              only: main
+

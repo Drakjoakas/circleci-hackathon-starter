@@ -1,0 +1,58 @@
+# CircleCI Configuration - AWS EKS (Kubernetes) Deployment
+# Copy this file to .circleci/config.yml to use it
+# Required Environment Variables (set in CircleCI Project Settings):
+#   - AWS_ACCESS_KEY_ID: Your AWS access key
+#   - AWS_SECRET_ACCESS_KEY: Your AWS secret key
+#   - AWS_REGION: AWS region (e.g., us-east-1)
+#   - AWS_EKS_CLUSTER_NAME: Your EKS cluster name
+
+version: 2.1
+
+orbs:
+  aws-eks: circleci/aws-eks@2.2.0
+  kubernetes: circleci/kubernetes@1.3.1
+
+jobs:
+  test:
+    docker:
+      - image: cimg/python:3.11
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: pip install -r requirements.txt
+      - run:
+          name: Run tests
+          command: |
+            pytest test_app.py -v
+            echo "✓ Tests passed"
+
+  deploy-to-eks:
+    docker:
+      - image: cimg/python:3.11
+    steps:
+      - checkout
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: ${AWS_EKS_CLUSTER_NAME}
+          install-kubectl: true
+      - kubernetes/create-or-update-resource:
+          resource-file-path: k8s/deployment.yaml
+          resource-name: deployment/hackathon-app
+      - run:
+          name: Verify deployment
+          command: |
+            kubectl rollout status deployment/hackathon-app
+            echo "✓ Deployed to EKS cluster: ${AWS_EKS_CLUSTER_NAME}"
+
+workflows:
+  version: 2
+  build-test-deploy:
+    jobs:
+      - test
+      - deploy-to-eks:
+          requires:
+            - test
+          filters:
+            branches:
+              only: main
+

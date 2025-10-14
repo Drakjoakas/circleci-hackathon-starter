@@ -1,0 +1,65 @@
+# CircleCI Configuration - Docker Hub Deployment
+# Copy this file to .circleci/config.yml to use it
+# This is the EASIEST deployment option - great for hackathons!
+# Required Environment Variables (set in CircleCI Project Settings):
+#   - DOCKER_USERNAME: Your Docker Hub username
+#   - DOCKER_PASSWORD: Your Docker Hub password/token
+
+version: 2.1
+
+orbs:
+  docker: circleci/docker@2.6.0
+
+jobs:
+  test:
+    docker:
+      - image: cimg/python:3.11
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: pip install -r requirements.txt
+      - run:
+          name: Run tests
+          command: |
+            pytest test_app.py -v
+            echo "✓ Tests passed"
+
+  build-and-push:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Build Docker image
+          command: |
+            docker build -t $DOCKER_USERNAME/hackathon-app:$CIRCLE_SHA1 .
+            docker tag $DOCKER_USERNAME/hackathon-app:$CIRCLE_SHA1 $DOCKER_USERNAME/hackathon-app:latest
+            echo "✓ Docker image built"
+      - run:
+          name: Login to Docker Hub
+          command: |
+            echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+            echo "✓ Logged in to Docker Hub"
+      - run:
+          name: Push to Docker Hub
+          command: |
+            docker push $DOCKER_USERNAME/hackathon-app:$CIRCLE_SHA1
+            docker push $DOCKER_USERNAME/hackathon-app:latest
+            echo "✓ Pushed to Docker Hub"
+            echo "Your image: docker pull $DOCKER_USERNAME/hackathon-app:latest"
+
+workflows:
+  version: 2
+  build-test-deploy:
+    jobs:
+      - test
+      - build-and-push:
+          requires:
+            - test
+          filters:
+            branches:
+              only: main
+

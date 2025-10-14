@@ -1,8 +1,8 @@
 # CircleCI Hackathon Starter
 
-**Redesign the SDLC with CircleCI** - Build an AI-powered solution that fundamentally reimagines 1-2 phases of the Software Development Lifecycle, with CircleCI as the orchestration backbone.
-
 This starter repository helps you quickly deploy your hackathon project using CircleCI with minimal configuration.
+
+**Goal**: Get your project building and deploying with CircleCI! 🚀
 
 ---
 
@@ -31,72 +31,37 @@ Your first build should pass immediately with the default configuration!
 
 ### Deployment Examples
 
-Three complete deployment configurations in the `examples/` folder:
-
-- `deploy-to-aws.yml` - Deploy to AWS Lambda
-- `deploy-to-gcp.yml` - Deploy to Google Cloud Run  
-- `deploy-to-azure.yml` - Deploy to Azure Functions
+Five deployment configurations in the `examples/` folder - pick the one that fits your project
 
 ### Helper Scripts
 
-- `scripts/setup.sh` - Validates your config and shows required environment variables
-- `scripts/validate.sh` - Quick validation of your CircleCI configuration
+- **`scripts/setup.sh`** - Run this FIRST! Checks everything and tells you what to do next
+- **`scripts/validate.sh`** - Quick check: "Is my CircleCI config file valid?"
 
 ---
 
-## ☁️ How to Choose Your Deployment Target
+## ☁️ Deployment (Optional)
 
-Pick the cloud platform that fits your project:
+The default config just runs tests. Want to deploy? Pick one:
 
-| Platform | Best For | Deployment Type |
-|----------|----------|-----------------|
-| **AWS Lambda** | Serverless functions, event-driven apps | Function as a Service |
-| **GCP Cloud Run** | Containerized apps, microservices | Container as a Service |
-| **Azure Functions** | Azure ecosystem, enterprise integration | Function as a Service |
+```bash
+# Docker
+cp examples/deploy-to-docker.yml .circleci/config.yml          # Docker Hub
 
-### To Deploy:
+# AWS
+cp examples/deploy-to-aws-ecs.yml .circleci/config.yml         # ECS (containers)
+cp examples/deploy-to-aws-eks.yml .circleci/config.yml         # EKS (Kubernetes)
 
-1. Copy the example config to `.circleci/config.yml`:
-   ```bash
-   cp examples/deploy-to-aws.yml .circleci/config.yml
-   ```
+# Google Cloud
+cp examples/deploy-to-gcp.yml .circleci/config.yml             # Cloud Run
 
-2. Set environment variables in CircleCI (see next section)
+# Azure
+cp examples/deploy-to-azure-container.yml .circleci/config.yml # Container Instances
+```
 
-3. Push to the `main` branch - deployment happens automatically!
+Then: Set environment variables in CircleCI (Project Settings → Environment Variables) and push to `main`.
 
----
-
-## 🔐 Environment Variables You'll Need
-
-Set these in your CircleCI project settings (**Project Settings → Environment Variables**):
-
-### For AWS Lambda
-
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `AWS_ACCESS_KEY_ID` | AWS access key | `AKIAIOSFODNN7EXAMPLE` |
-| `AWS_SECRET_ACCESS_KEY` | AWS secret key | `wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY` |
-| `AWS_LAMBDA_FUNCTION_NAME` | Lambda function name | `my-hackathon-app` |
-| `AWS_REGION` | AWS region | `us-east-1` |
-
-### For GCP Cloud Run
-
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `GCP_PROJECT_ID` | GCP project ID | `my-project-12345` |
-| `GCP_REGION` | GCP region | `us-central1` |
-| `GCP_SERVICE_ACCOUNT_KEY` | Base64-encoded service account JSON | `eyJ0eXBlIjoi...` |
-
-### For Azure Functions
-
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `AZURE_FUNCTION_APP_NAME` | Function app name | `my-hackathon-func` |
-| `AZURE_RESOURCE_GROUP` | Resource group | `hackathon-rg` |
-| `AZURE_SP_APP_ID` | Service principal app ID | `12345678-1234-1234-1234-123456789012` |
-| `AZURE_SP_PASSWORD` | Service principal password | `your-password` |
-| `AZURE_SP_TENANT` | Azure tenant ID | `87654321-4321-4321-4321-210987654321` |
+**Need Lambda, Functions, or other services?** Check [CircleCI deployment docs](https://circleci.com/docs/deployment-overview/).
 
 ---
 
@@ -154,17 +119,17 @@ To manually trigger a build:
 
 ## 📝 Submission Requirements
 
-Before submitting your project:
+For your hackathon submission, show off your CircleCI integration:
 
-1. **Add a CircleCI badge** to your README showing build status
-2. **Provide API proof** of deployment via CircleCI status endpoint
-3. **Document your SDLC redesign** - explain how CircleCI orchestrates your solution
+1. **Add a CircleCI badge** to your README (shows your build is passing!)
+2. **Screenshot or link** to your CircleCI pipeline
+3. **Bonus**: Tackle the optional mission - redesign part of the SDLC with AI + CircleCI
 
-See `SUBMISSION_TEMPLATE.md` for the complete submission format.
+See `SUBMISSION_TEMPLATE.md` for ideas.
 
 ### Prizes
 
-Prizes to be announced - may include online learning memberships and gift cards!
+Prizes to be announced.
 
 ---
 
@@ -217,12 +182,9 @@ workflows:
 
 ## 🎉 Ready to Build?
 
-Remember: The goal is to **redesign the SDLC with CircleCI**. Think about:
+Get your CircleCI pipeline running, then build your project! 
 
-- How can CI/CD improve development workflows?
-- What manual processes can be automated?
-- How can CircleCI orchestrate complex AI pipelines?
-- What new SDLC phases are enabled by intelligent automation?
+**Optional Challenge Mission**: *"Redesign the SDLC with CircleCI"* - Use AI + CircleCI to reimagine development workflows. Examples: AI code review, smart testing, automated docs, intelligent deployments.
 
 **Now go build something amazing!** 🚀
 

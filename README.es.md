@@ -1,8 +1,8 @@
 # CircleCI Hackathon Starter
 
-**Rediseña el SDLC con CircleCI** - Construye una solución potenciada por IA que reimagine fundamentalmente 1-2 fases del Ciclo de Vida del Desarrollo de Software, con CircleCI como la columna vertebral de orquestación.
-
 Este repositorio de inicio te ayuda a desplegar rápidamente tu proyecto de hackathon usando CircleCI con configuración mínima.
+
+**Objetivo**: ¡Haz que tu proyecto se construya y despliegue con CircleCI! 🚀
 
 ---
 
@@ -31,72 +31,37 @@ Pon tu proyecto en marcha en 5 minutos:
 
 ### Ejemplos de Despliegue
 
-Tres configuraciones completas de despliegue en la carpeta `examples/`:
-
-- `deploy-to-aws.yml` - Desplegar a AWS Lambda
-- `deploy-to-gcp.yml` - Desplegar a Google Cloud Run  
-- `deploy-to-azure.yml` - Desplegar a Azure Functions
+Cinco configuraciones de despliegue en la carpeta `examples/` - elige la que se ajuste a tu proyecto
 
 ### Scripts de Ayuda
 
-- `scripts/setup.sh` - Valida tu configuración y muestra las variables de entorno requeridas
-- `scripts/validate.sh` - Validación rápida de tu configuración de CircleCI
+- **`scripts/setup.sh`** - ¡Ejecuta esto PRIMERO! Revisa todo y te dice qué hacer después
+- **`scripts/validate.sh`** - Verificación rápida: "¿Es válido mi archivo de config de CircleCI?"
 
 ---
 
-## ☁️ Cómo Elegir Tu Destino de Despliegue
+## ☁️ Despliegue (Opcional)
 
-Elige la plataforma en la nube que se ajuste a tu proyecto:
+La configuración predeterminada solo ejecuta pruebas. ¿Quieres desplegar? Elige uno:
 
-| Plataforma | Mejor Para | Tipo de Despliegue |
-|----------|----------|-----------------|
-| **AWS Lambda** | Funciones serverless, apps basadas en eventos | Función como Servicio |
-| **GCP Cloud Run** | Apps en contenedores, microservicios | Contenedor como Servicio |
-| **Azure Functions** | Ecosistema Azure, integración empresarial | Función como Servicio |
+```bash
+# Docker
+cp examples/deploy-to-docker.yml .circleci/config.yml          # Docker Hub
 
-### Para Desplegar:
+# AWS
+cp examples/deploy-to-aws-ecs.yml .circleci/config.yml         # ECS (contenedores)
+cp examples/deploy-to-aws-eks.yml .circleci/config.yml         # EKS (Kubernetes)
 
-1. Copia el ejemplo de configuración a `.circleci/config.yml`:
-   ```bash
-   cp examples/deploy-to-aws.yml .circleci/config.yml
-   ```
+# Google Cloud
+cp examples/deploy-to-gcp.yml .circleci/config.yml             # Cloud Run
 
-2. Configura las variables de entorno en CircleCI (ver siguiente sección)
+# Azure
+cp examples/deploy-to-azure-container.yml .circleci/config.yml # Container Instances
+```
 
-3. ¡Sube a la rama `main` - el despliegue ocurre automáticamente!
+Luego: Configura variables de entorno en CircleCI (Configuración del Proyecto → Variables de Entorno) y sube a `main`.
 
----
-
-## 🔐 Variables de Entorno que Necesitarás
-
-Configúralas en los ajustes de tu proyecto de CircleCI (**Configuración del Proyecto → Variables de Entorno**):
-
-### Para AWS Lambda
-
-| Variable | Descripción | Ejemplo |
-|----------|-------------|---------|
-| `AWS_ACCESS_KEY_ID` | Clave de acceso AWS | `AKIAIOSFODNN7EXAMPLE` |
-| `AWS_SECRET_ACCESS_KEY` | Clave secreta AWS | `wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY` |
-| `AWS_LAMBDA_FUNCTION_NAME` | Nombre de la función Lambda | `my-hackathon-app` |
-| `AWS_REGION` | Región de AWS | `us-east-1` |
-
-### Para GCP Cloud Run
-
-| Variable | Descripción | Ejemplo |
-|----------|-------------|---------|
-| `GCP_PROJECT_ID` | ID del proyecto GCP | `my-project-12345` |
-| `GCP_REGION` | Región GCP | `us-central1` |
-| `GCP_SERVICE_ACCOUNT_KEY` | JSON de cuenta de servicio codificado en Base64 | `eyJ0eXBlIjoi...` |
-
-### Para Azure Functions
-
-| Variable | Descripción | Ejemplo |
-|----------|-------------|---------|
-| `AZURE_FUNCTION_APP_NAME` | Nombre de la app de función | `my-hackathon-func` |
-| `AZURE_RESOURCE_GROUP` | Grupo de recursos | `hackathon-rg` |
-| `AZURE_SP_APP_ID` | ID de app del service principal | `12345678-1234-1234-1234-123456789012` |
-| `AZURE_SP_PASSWORD` | Contraseña del service principal | `your-password` |
-| `AZURE_SP_TENANT` | ID del tenant de Azure | `87654321-4321-4321-4321-210987654321` |
+**¿Necesitas Lambda, Functions u otros servicios?** Consulta la [documentación de despliegue de CircleCI](https://circleci.com/docs/deployment-overview/).
 
 ---
 
@@ -154,13 +119,13 @@ Para activar manualmente una compilación:
 
 ## 📝 Requisitos de Envío
 
-Antes de enviar tu proyecto:
+Para tu envío del hackathon, muestra tu integración con CircleCI:
 
-1. **Agrega una insignia de CircleCI** a tu README mostrando el estado de la compilación
-2. **Proporciona prueba API** del despliegue a través del endpoint de estado de CircleCI
-3. **Documenta tu rediseño del SDLC** - explica cómo CircleCI orquesta tu solución
+1. **Agrega una insignia de CircleCI** a tu README (¡muestra que tu build pasa!)
+2. **Captura de pantalla o enlace** a tu pipeline de CircleCI
+3. **Bonus**: Afronta la misión opcional - rediseña parte del SDLC con IA + CircleCI
 
-Ver `SUBMISSION_TEMPLATE.md` para el formato completo de envío.
+Ver `SUBMISSION_TEMPLATE.md` para ideas.
 
 ### Premios
 
@@ -217,12 +182,9 @@ workflows:
 
 ## 🎉 ¿Listo para Construir?
 
-Recuerda: El objetivo es **rediseñar el SDLC con CircleCI**. Piensa en:
+¡Pon en marcha tu pipeline de CircleCI y luego construye tu proyecto!
 
-- ¿Cómo puede CI/CD mejorar los flujos de trabajo de desarrollo?
-- ¿Qué procesos manuales se pueden automatizar?
-- ¿Cómo puede CircleCI orquestar pipelines complejos de IA?
-- ¿Qué nuevas fases del SDLC se habilitan con la automatización inteligente?
+**Misión de Desafío Opcional**: *"Rediseña el SDLC con CircleCI"* - Usa IA + CircleCI para reimaginar flujos de desarrollo. Ejemplos: revisión de código con IA, pruebas inteligentes, documentación automatizada, despliegues inteligentes.
 
 **¡Ahora ve y construye algo increíble!** 🚀
 

@@ -21,7 +21,7 @@ if circleci config validate .circleci/config.yml; then
     
     # List environment variables found in config
     echo "Environment variables referenced in config:"
-    grep -o '\$[A-Z_]*' .circleci/config.yml | sort -u | sed 's/\$/  - /' || echo "  None found"
+    grep -o '\$[A-Z_][A-Z_0-9]*' .circleci/config.yml | sort -u | sed 's/\$/  - /' || echo "  None found"
     
     exit 0
 else
