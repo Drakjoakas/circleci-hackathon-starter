@@ -53,6 +53,6 @@ workflows:
             - aws-ecr/build_and_push_image
           family: hackathon-app
           cluster: ${AWS_ECS_CLUSTER}
-          service-name: ${AWS_ECS_SERVICE}
-          container-image-name-updates: container=hackathon-app,tag=${CIRCLE_SHA1}
+          service_name: ${AWS_ECS_SERVICE}
+          container_image_name_updates: container=hackathon-app,tag=${CIRCLE_SHA1}
 
