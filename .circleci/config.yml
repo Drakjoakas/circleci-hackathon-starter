@@ -1,0 +1,155 @@
+# CircleCI Configuration for Hackathon Starter
+# This configuration runs tests by default. Uncomment deployment sections to deploy to your cloud provider.
+
+version: 2.1
+
+# Orbs are reusable packages of CircleCI configuration
+orbs:
+  python: circleci/python@2.1.0
+  node: circleci/node@5.2.0
+  docker: circleci/docker@2.6.0
+
+# Jobs define the tasks that will be executed
+jobs:
+  # Test job - runs by default on every commit
+  test:
+    docker:
+      - image: cimg/python:3.11
+    steps:
+      - checkout
+      
+      # Install dependencies
+      - run:
+          name: Install Python dependencies
+          command: |
+            pip install -r requirements.txt
+      
+      # Run tests
+      - run:
+          name: Run tests
+          command: |
+            pytest test_app.py -v
+            echo "✓ All tests passed!"
+
+  # ========================================
+  # DEPLOYMENT OPTIONS
+  # Uncomment ONE of the following deployment jobs and add it to the workflow below
+  # Remember to set the required environment variables in CircleCI project settings!
+  # ========================================
+
+  # OPTION 1: Deploy to AWS Lambda
+  # Uncomment this job to deploy to AWS Lambda
+  # Required environment variables: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_LAMBDA_FUNCTION_NAME, AWS_REGION
+  
+  # deploy-to-aws:
+  #   docker:
+  #     - image: cimg/python:3.11
+  #   steps:
+  #     - checkout
+  #     - run:
+  #         name: Install AWS CLI
+  #         command: |
+  #           pip install awscli
+  #     - run:
+  #         name: Package application
+  #         command: |
+  #           pip install -r requirements.txt -t package/
+  #           cp app.py package/
+  #           cd package && zip -r ../deployment.zip . && cd ..
+  #     - run:
+  #         name: Deploy to Lambda
+  #         command: |
+  #           aws lambda update-function-code \
+  #             --function-name $AWS_LAMBDA_FUNCTION_NAME \
+  #             --zip-file fileb://deployment.zip \
+  #             --region $AWS_REGION
+
+  # OPTION 2: Deploy to Google Cloud Run
+  # Uncomment this job to deploy to GCP Cloud Run
+  # Required environment variables: GCP_PROJECT_ID, GCP_REGION, GCP_SERVICE_ACCOUNT_KEY
+  
+  # deploy-to-gcp:
+  #   docker:
+  #     - image: cimg/python:3.11
+  #   steps:
+  #     - checkout
+  #     - setup_remote_docker:
+  #         docker_layer_caching: true
+  #     - run:
+  #         name: Install Google Cloud SDK
+  #         command: |
+  #           echo $GCP_SERVICE_ACCOUNT_KEY | base64 -d > ${HOME}/gcp-key.json
+  #           gcloud auth activate-service-account --key-file ${HOME}/gcp-key.json
+  #           gcloud --quiet config set project $GCP_PROJECT_ID
+  #     - run:
+  #         name: Build and push Docker image
+  #         command: |
+  #           gcloud builds submit --tag gcr.io/$GCP_PROJECT_ID/hackathon-app
+  #     - run:
+  #         name: Deploy to Cloud Run
+  #         command: |
+  #           gcloud run deploy hackathon-app \
+  #             --image gcr.io/$GCP_PROJECT_ID/hackathon-app \
+  #             --platform managed \
+  #             --region $GCP_REGION \
+  #             --allow-unauthenticated
+
+  # OPTION 3: Deploy to Azure Functions
+  # Uncomment this job to deploy to Azure Functions
+  # Required environment variables: AZURE_FUNCTION_APP_NAME, AZURE_RESOURCE_GROUP, AZURE_SP_PASSWORD, AZURE_SP_TENANT
+  
+  # deploy-to-azure:
+  #   docker:
+  #     - image: cimg/python:3.11
+  #   steps:
+  #     - checkout
+  #     - run:
+  #         name: Install Azure CLI
+  #         command: |
+  #           curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+  #     - run:
+  #         name: Login to Azure
+  #         command: |
+  #           az login --service-principal \
+  #             -u $AZURE_SP_APP_ID \
+  #             -p $AZURE_SP_PASSWORD \
+  #             --tenant $AZURE_SP_TENANT
+  #     - run:
+  #         name: Deploy to Azure Functions
+  #         command: |
+  #           az functionapp deployment source config-zip \
+  #             -g $AZURE_RESOURCE_GROUP \
+  #             -n $AZURE_FUNCTION_APP_NAME \
+  #             --src deployment.zip
+
+# Workflows define the order in which jobs run
+workflows:
+  version: 2
+  
+  # Default workflow - runs on every commit
+  build-and-test:
+    jobs:
+      - test
+      
+      # Uncomment the deployment job you want to use:
+      # - deploy-to-aws:
+      #     requires:
+      #       - test
+      #     filters:
+      #       branches:
+      #         only: main
+      
+      # - deploy-to-gcp:
+      #     requires:
+      #       - test
+      #     filters:
+      #       branches:
+      #         only: main
+      
+      # - deploy-to-azure:
+      #     requires:
+      #       - test
+      #     filters:
+      #       branches:
+      #         only: main
+

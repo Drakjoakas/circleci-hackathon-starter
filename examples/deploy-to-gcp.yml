@@ -1,0 +1,71 @@
+# CircleCI Configuration - Google Cloud Run Deployment
+# Copy this file to .circleci/config.yml to use it
+# Required Environment Variables (set in CircleCI Project Settings):
+#   - GCP_PROJECT_ID: Your GCP project ID
+#   - GCP_REGION: GCP region (e.g., us-central1)
+#   - GCP_SERVICE_ACCOUNT_KEY: Base64-encoded service account key JSON
+
+version: 2.1
+
+orbs:
+  python: circleci/python@2.1.0
+  gcp-cli: circleci/gcp-cli@3.1.0
+
+jobs:
+  test:
+    docker:
+      - image: cimg/python:3.11
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: pip install -r requirements.txt
+      - run:
+          name: Run tests
+          command: |
+            pytest test_app.py -v
+            echo "✓ Tests passed"
+
+  deploy-to-gcp:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - gcp-cli/setup
+      - run:
+          name: Authenticate with GCP
+          command: |
+            echo $GCP_SERVICE_ACCOUNT_KEY | base64 -d > ${HOME}/gcp-key.json
+            gcloud auth activate-service-account --key-file ${HOME}/gcp-key.json
+            gcloud --quiet config set project $GCP_PROJECT_ID
+            echo "✓ Authenticated with GCP"
+      - run:
+          name: Build and push Docker image
+          command: |
+            gcloud builds submit --tag gcr.io/$GCP_PROJECT_ID/hackathon-app
+            echo "✓ Docker image built and pushed"
+      - run:
+          name: Deploy to Cloud Run
+          command: |
+            gcloud run deploy hackathon-app \
+              --image gcr.io/$GCP_PROJECT_ID/hackathon-app \
+              --platform managed \
+              --region $GCP_REGION \
+              --allow-unauthenticated
+            echo "✓ Deployed to Cloud Run"
+            gcloud run services describe hackathon-app --region $GCP_REGION --format 'value(status.url)'
+
+workflows:
+  version: 2
+  build-test-deploy:
+    jobs:
+      - test
+      - deploy-to-gcp:
+          requires:
+            - test
+          filters:
+            branches:
+              only: main
+
