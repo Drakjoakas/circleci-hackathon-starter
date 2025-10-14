@@ -42,21 +42,27 @@ Cinco configuraciones de despliegue en la carpeta `examples/` - elige la que se 
 
 ## ☁️ Despliegue (Opcional)
 
-La configuración predeterminada solo ejecuta pruebas. ¿Quieres desplegar? Elige uno:
+La configuración predeterminada solo ejecuta pruebas. ¿Quieres desplegar? Elige uno según tu experiencia:
 
+### ⭐ Más Fácil (Recomendado para Empezar)
 ```bash
-# Docker
 cp examples/deploy-to-docker.yml .circleci/config.yml          # Docker Hub
+```
 
-# AWS
-cp examples/deploy-to-aws-ecs.yml .circleci/config.yml         # ECS (contenedores)
-cp examples/deploy-to-aws-eks.yml .circleci/config.yml         # EKS (Kubernetes)
+### ⭐⭐ Fácil (Si Tienes Experiencia con la Nube)
+```bash
+cp examples/deploy-to-gcp.yml .circleci/config.yml             # Google Cloud Run
+```
 
-# Google Cloud
-cp examples/deploy-to-gcp.yml .circleci/config.yml             # Cloud Run
+### ⭐⭐⭐ Intermedio (Requiere Configuración de Nube)
+```bash
+cp examples/deploy-to-azure-container.yml .circleci/config.yml # Azure Container Instances
+cp examples/deploy-to-aws-ecs.yml .circleci/config.yml         # AWS ECS
+```
 
-# Azure
-cp examples/deploy-to-azure-container.yml .circleci/config.yml # Container Instances
+### ⭐⭐⭐⭐ Avanzado (Requiere Conocimiento de Kubernetes)
+```bash
+cp examples/deploy-to-aws-eks.yml .circleci/config.yml         # AWS EKS (Kubernetes)
 ```
 
 Luego: Configura variables de entorno en CircleCI (Configuración del Proyecto → Variables de Entorno) y sube a `main`.

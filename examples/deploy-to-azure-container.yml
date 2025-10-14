@@ -46,6 +46,13 @@ jobs:
       - run:
           name: Deploy to Azure Container Instances
           command: |
+            # Delete existing container if it exists (makes redeployment work)
+            az container delete \
+              --resource-group ${AZURE_RESOURCE_GROUP} \
+              --name hackathon-app \
+              --yes || true
+            
+            # Create new container
             az container create \
               --resource-group ${AZURE_RESOURCE_GROUP} \
               --name hackathon-app \

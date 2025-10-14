@@ -8,7 +8,6 @@
 version: 2.1
 
 orbs:
-  python: circleci/python@2.1.0
   gcp-cli: circleci/gcp-cli@3.2.1
 
 jobs:

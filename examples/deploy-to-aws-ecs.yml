@@ -35,7 +35,7 @@ workflows:
   build-test-deploy:
     jobs:
       - test
-      - aws-ecr/build-and-push-image:
+      - aws-ecr/build_and_push_image:
           requires:
             - test
           filters:
@@ -45,7 +45,7 @@ workflows:
           tag: ${CIRCLE_SHA1},latest
       - aws-ecs/deploy-service-update:
           requires:
-            - aws-ecr/build-and-push-image
+            - aws-ecr/build_and_push_image
           family: hackathon-app
           cluster: ${AWS_ECS_CLUSTER}
           service-name: ${AWS_ECS_SERVICE}

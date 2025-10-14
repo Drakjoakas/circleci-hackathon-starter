@@ -42,21 +42,27 @@ Five deployment configurations in the `examples/` folder - pick the one that fit
 
 ## ☁️ Deployment (Optional)
 
-The default config just runs tests. Want to deploy? Pick one:
+The default config just runs tests. Want to deploy? Pick one based on your experience:
 
+### ⭐ Easiest (Recommended for Getting Started)
 ```bash
-# Docker
 cp examples/deploy-to-docker.yml .circleci/config.yml          # Docker Hub
+```
 
-# AWS
-cp examples/deploy-to-aws-ecs.yml .circleci/config.yml         # ECS (containers)
-cp examples/deploy-to-aws-eks.yml .circleci/config.yml         # EKS (Kubernetes)
+### ⭐⭐ Easy (If You Have Cloud Experience)
+```bash
+cp examples/deploy-to-gcp.yml .circleci/config.yml             # Google Cloud Run
+```
 
-# Google Cloud
-cp examples/deploy-to-gcp.yml .circleci/config.yml             # Cloud Run
+### ⭐⭐⭐ Intermediate (Requires Cloud Setup)
+```bash
+cp examples/deploy-to-azure-container.yml .circleci/config.yml # Azure Container Instances
+cp examples/deploy-to-aws-ecs.yml .circleci/config.yml         # AWS ECS
+```
 
-# Azure
-cp examples/deploy-to-azure-container.yml .circleci/config.yml # Container Instances
+### ⭐⭐⭐⭐ Advanced (Requires Kubernetes Knowledge)
+```bash
+cp examples/deploy-to-aws-eks.yml .circleci/config.yml         # AWS EKS (Kubernetes)
 ```
 
 Then: Set environment variables in CircleCI (Project Settings → Environment Variables) and push to `main`.

@@ -1,5 +1,10 @@
 # CircleCI Configuration - AWS EKS (Kubernetes) Deployment
 # Copy this file to .circleci/config.yml to use it
+#
+# NOTE: You'll need to create your own Kubernetes manifests in k8s/deployment.yaml
+# See: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+# Example: https://kubernetes.io/docs/tutorials/stateless-application/expose-external-ip-address/
+#
 # Required Environment Variables (set in CircleCI Project Settings):
 #   - AWS_ACCESS_KEY_ID: Your AWS access key
 #   - AWS_SECRET_ACCESS_KEY: Your AWS secret key
