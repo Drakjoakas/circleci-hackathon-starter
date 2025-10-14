@@ -47,6 +47,8 @@ workflows:
           repo: hackathon-app
           tag: ${CIRCLE_SHA1},latest
       - aws-ecs/deploy_service_update:
+          auth:
+            - aws-cli/setup
           requires:
             - aws-ecr/build_and_push_image
           family: hackathon-app
