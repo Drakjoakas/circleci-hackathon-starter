@@ -26,12 +26,16 @@ git push origin main
 Watch your first build pass! ✓
 
 ### 5. Choose Deployment (Optional)
-Copy an example config:
-```bash
-cp examples/deploy-to-aws.yml .circleci/config.yml
-```
 
-Set environment variables in CircleCI project settings
+**Easy Option**: Uncomment in `.circleci/config.yml`
+- Open `.circleci/config.yml`
+- Uncomment `deploy-to-gcp` (Cloud Run - recommended) or `deploy-to-ecs` (AWS ECS)
+- Uncomment the corresponding workflow section
+- Set environment variables in CircleCI project settings
+
+**Advanced Option**: Copy from `examples/` folder
+- See `examples/deploy-to-docker.yml`, `deploy-to-aws-eks.yml`, or `deploy-to-azure-container.yml`
+- Follow copy instructions in each file
 
 ## Need Help?
 
