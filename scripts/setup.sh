@@ -36,47 +36,52 @@ else
 fi
 
 echo ""
-echo "Environment variables needed:"
+echo "Deployment Options:"
 echo "----------------------------"
-echo "For AWS Lambda deployment:"
-echo "  - AWS_ACCESS_KEY_ID"
-echo "  - AWS_SECRET_ACCESS_KEY"
-echo "  - AWS_LAMBDA_FUNCTION_NAME"
-echo "  - AWS_REGION"
 echo ""
-echo "For GCP Cloud Run deployment:"
-echo "  - GCP_PROJECT_ID"
-echo "  - GCP_REGION"
-echo "  - GCP_SERVICE_ACCOUNT_KEY"
+echo "EASY (Uncomment in main config):"
+echo "  ✓ GCP Cloud Run (recommended for hackathons - free tier)"
+echo "    Required: GCP_PROJECT_ID, GCP_REGION, GCLOUD_SERVICE_KEY"
 echo ""
-echo "For Azure Functions deployment:"
-echo "  - AZURE_FUNCTION_APP_NAME"
-echo "  - AZURE_RESOURCE_GROUP"
-echo "  - AZURE_SP_APP_ID"
-echo "  - AZURE_SP_PASSWORD"
-echo "  - AZURE_SP_TENANT"
+echo "  ✓ AWS ECS (container service - free tier available)"
+echo "    Required: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_ACCOUNT_ID,"
+echo "              AWS_REGION, AWS_ECS_CLUSTER, AWS_ECS_SERVICE"
+echo ""
+echo "ADVANCED (Copy from examples/ folder):"
+echo "  • Docker Hub - See examples/deploy-to-docker.yml"
+echo "  • AWS EKS (Kubernetes) - See examples/deploy-to-aws-eks.yml"
+echo "  • Azure Container Instances - See examples/deploy-to-azure-container.yml"
 echo ""
 
 # Create .env.example file
 echo "Creating .env.example file..."
 cat > .env.example << 'EOF'
-# AWS Configuration
-AWS_ACCESS_KEY_ID=your_aws_access_key_id
-AWS_SECRET_ACCESS_KEY=your_aws_secret_access_key
-AWS_LAMBDA_FUNCTION_NAME=your_lambda_function_name
-AWS_REGION=us-east-1
-
-# GCP Configuration
+# GCP Cloud Run Configuration (Recommended)
 GCP_PROJECT_ID=your_gcp_project_id
 GCP_REGION=us-central1
-GCP_SERVICE_ACCOUNT_KEY=your_base64_encoded_service_account_key
+GCLOUD_SERVICE_KEY=your_base64_encoded_service_account_key
 
-# Azure Configuration
-AZURE_FUNCTION_APP_NAME=your_function_app_name
-AZURE_RESOURCE_GROUP=your_resource_group
+# AWS ECS Configuration
+AWS_ACCESS_KEY_ID=your_aws_access_key_id
+AWS_SECRET_ACCESS_KEY=your_aws_secret_access_key
+AWS_ACCOUNT_ID=123456789012
+AWS_REGION=us-east-1
+AWS_ECS_CLUSTER=your_ecs_cluster
+AWS_ECS_SERVICE=your_ecs_service
+
+# Docker Hub Configuration (Advanced)
+DOCKER_USERNAME=your_docker_username
+DOCKER_PASSWORD=your_docker_password_or_token
+
+# AWS EKS Configuration (Advanced)
+AWS_EKS_CLUSTER_NAME=your_eks_cluster_name
+
+# Azure Container Instances Configuration (Advanced)
 AZURE_SP_APP_ID=your_service_principal_app_id
 AZURE_SP_PASSWORD=your_service_principal_password
 AZURE_SP_TENANT=your_azure_tenant_id
+AZURE_RESOURCE_GROUP=your_resource_group
+AZURE_REGISTRY_NAME=your_acr_name
 EOF
 echo "✓ Created .env.example"
 
@@ -86,9 +91,9 @@ echo "Setup complete!"
 echo "========================================="
 echo ""
 echo "Next steps:"
-echo "1. Choose a deployment target (AWS/GCP/Azure)"
+echo "1. Choose a deployment option (Cloud Run recommended)"
 echo "2. Set environment variables in CircleCI project settings"
-echo "3. Update .circleci/config.yml or copy an example from examples/"
+echo "3. Uncomment deployment in .circleci/config.yml (or copy from examples/)"
 echo "4. Push to GitHub and watch your pipeline run!"
 echo ""
 

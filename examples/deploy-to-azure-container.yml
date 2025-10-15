@@ -1,5 +1,12 @@
-# CircleCI Configuration - Azure Container Instances Deployment
-# Copy this file to .circleci/config.yml to use it
+# CircleCI Configuration - Azure Container Instances Deployment (ADVANCED EXAMPLE)
+#
+# This is a reference example for Azure Container Instances deployment.
+# To use this:
+# 1. Copy the "deploy-to-azure" job from this file
+# 2. Paste it into your .circleci/config.yml after the test job
+# 3. Copy the workflow section and add to your workflows
+# 4. Set required environment variables in CircleCI
+#
 # Required Environment Variables (set in CircleCI Project Settings):
 #   - AZURE_SP_APP_ID: Service principal app ID
 #   - AZURE_SP_PASSWORD: Service principal password

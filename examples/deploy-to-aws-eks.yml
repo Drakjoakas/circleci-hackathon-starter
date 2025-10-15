@@ -1,9 +1,13 @@
-# CircleCI Configuration - AWS EKS (Kubernetes) Deployment
-# Copy this file to .circleci/config.yml to use it
+# CircleCI Configuration - AWS EKS (Kubernetes) Deployment (ADVANCED EXAMPLE)
 #
-# NOTE: You'll need to create your own Kubernetes manifests in k8s/deployment.yaml
-# See: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
-# Example: https://kubernetes.io/docs/tutorials/stateless-application/expose-external-ip-address/
+# This is a reference example for AWS EKS/Kubernetes deployment.
+# To use this:
+# 1. Create your Kubernetes manifests in k8s/deployment.yaml
+#    See: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+# 2. Copy the "deploy-to-eks" job from this file
+# 3. Paste it into your .circleci/config.yml after the test job
+# 4. Copy the workflow section and add to your workflows
+# 5. Set required environment variables in CircleCI
 #
 # Required Environment Variables (set in CircleCI Project Settings):
 #   - AWS_ACCESS_KEY_ID: Your AWS access key

@@ -1,13 +1,15 @@
 # CircleCI Configuration for Hackathon Starter
-# This configuration runs tests by default. Uncomment deployment sections to deploy to your cloud provider.
+# This configuration runs tests by default. Uncomment ONE deployment option below to deploy.
 
 version: 2.1
 
 # Orbs are reusable packages of CircleCI configuration
 orbs:
   python: circleci/python@2.1.0
-  node: circleci/node@5.2.0
-  docker: circleci/docker@2.6.0
+  gcp-cloud-run: circleci/gcp-cloud-run@1.0.2
+  aws-cli: circleci/aws-cli@4.1.3
+  aws-ecr: circleci/aws-ecr@9.0.0
+  aws-ecs: circleci/aws-ecs@7.1.0
 
 # Jobs define the tasks that will be executed
 jobs:
@@ -33,94 +35,67 @@ jobs:
 
   # ========================================
   # DEPLOYMENT OPTIONS
-  # Uncomment ONE of the following deployment jobs and add it to the workflow below
-  # Remember to set the required environment variables in CircleCI project settings!
+  # Uncomment ONE of the options below to deploy your app
+  # All options preserve your test job above
   # ========================================
 
-  # OPTION 1: Deploy to AWS Lambda
-  # Uncomment this job to deploy to AWS Lambda
-  # Required environment variables: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_LAMBDA_FUNCTION_NAME, AWS_REGION
-  
-  # deploy-to-aws:
-  #   docker:
-  #     - image: cimg/python:3.11
-  #   steps:
-  #     - checkout
-  #     - run:
-  #         name: Install AWS CLI
-  #         command: |
-  #           pip install awscli
-  #     - run:
-  #         name: Package application
-  #         command: |
-  #           pip install -r requirements.txt -t package/
-  #           cp app.py package/
-  #           cd package && zip -r ../deployment.zip . && cd ..
-  #     - run:
-  #         name: Deploy to Lambda
-  #         command: |
-  #           aws lambda update-function-code \
-  #             --function-name $AWS_LAMBDA_FUNCTION_NAME \
-  #             --zip-file fileb://deployment.zip \
-  #             --region $AWS_REGION
-
-  # OPTION 2: Deploy to Google Cloud Run
-  # Uncomment this job to deploy to GCP Cloud Run
-  # Required environment variables: GCP_PROJECT_ID, GCP_REGION, GCP_SERVICE_ACCOUNT_KEY
-  
+  # OPTION 1: Deploy to Google Cloud Run (RECOMMENDED - Free Tier)
+  # Uncomment this job to deploy to GCP Cloud Run using CircleCI orb
+  # Required environment variables: GCP_PROJECT_ID, GCP_REGION, GCLOUD_SERVICE_KEY
+  #
   # deploy-to-gcp:
   #   docker:
-  #     - image: cimg/python:3.11
+  #     - image: cimg/base:stable
   #   steps:
   #     - checkout
   #     - setup_remote_docker:
   #         docker_layer_caching: true
-  #     - run:
-  #         name: Install Google Cloud SDK
-  #         command: |
-  #           echo $GCP_SERVICE_ACCOUNT_KEY | base64 -d > ${HOME}/gcp-key.json
-  #           gcloud auth activate-service-account --key-file ${HOME}/gcp-key.json
-  #           gcloud --quiet config set project $GCP_PROJECT_ID
+  #     - gcp-cloud-run/init
   #     - run:
   #         name: Build and push Docker image
   #         command: |
+  #           echo $GCLOUD_SERVICE_KEY | base64 -d > ${HOME}/gcp-key.json
+  #           gcloud auth activate-service-account --key-file ${HOME}/gcp-key.json
+  #           gcloud --quiet config set project $GCP_PROJECT_ID
   #           gcloud builds submit --tag gcr.io/$GCP_PROJECT_ID/hackathon-app
-  #     - run:
-  #         name: Deploy to Cloud Run
-  #         command: |
-  #           gcloud run deploy hackathon-app \
-  #             --image gcr.io/$GCP_PROJECT_ID/hackathon-app \
-  #             --platform managed \
-  #             --region $GCP_REGION \
-  #             --allow-unauthenticated
+  #           echo "✓ Docker image built and pushed to GCR"
+  #     - gcp-cloud-run/deploy:
+  #         service-name: hackathon-app
+  #         image: gcr.io/${GCP_PROJECT_ID}/hackathon-app
+  #         region: ${GCP_REGION}
+  #         unauthenticated: true
+  #         platform: managed
 
-  # OPTION 3: Deploy to Azure Functions
-  # Uncomment this job to deploy to Azure Functions
-  # Required environment variables: AZURE_FUNCTION_APP_NAME, AZURE_RESOURCE_GROUP, AZURE_SP_PASSWORD, AZURE_SP_TENANT
-  
-  # deploy-to-azure:
+  # OPTION 2: Deploy to AWS ECS (Container Service - Free Tier Available)
+  # Uncomment this job to deploy to AWS ECS
+  # Required environment variables: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_ACCOUNT_ID, AWS_REGION, AWS_ECS_CLUSTER, AWS_ECS_SERVICE
+  #
+  # deploy-to-ecs:
   #   docker:
   #     - image: cimg/python:3.11
   #   steps:
   #     - checkout
+  #     - setup_remote_docker
+  #     - aws-cli/setup
   #     - run:
-  #         name: Install Azure CLI
+  #         name: Build and push to ECR
   #         command: |
-  #           curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+  #           aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+  #           docker build -t hackathon-app .
+  #           docker tag hackathon-app:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/hackathon-app:${CIRCLE_SHA1}
+  #           docker tag hackathon-app:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/hackathon-app:latest
+  #           docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/hackathon-app:${CIRCLE_SHA1}
+  #           docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/hackathon-app:latest
+  #           echo "✓ Image pushed to ECR"
   #     - run:
-  #         name: Login to Azure
+  #         name: Deploy to ECS
   #         command: |
-  #           az login --service-principal \
-  #             -u $AZURE_SP_APP_ID \
-  #             -p $AZURE_SP_PASSWORD \
-  #             --tenant $AZURE_SP_TENANT
-  #     - run:
-  #         name: Deploy to Azure Functions
-  #         command: |
-  #           az functionapp deployment source config-zip \
-  #             -g $AZURE_RESOURCE_GROUP \
-  #             -n $AZURE_FUNCTION_APP_NAME \
-  #             --src deployment.zip
+  #           aws ecs update-service \
+  #             --cluster $AWS_ECS_CLUSTER \
+  #             --service $AWS_ECS_SERVICE \
+  #             --force-new-deployment \
+  #             --region $AWS_REGION
+  #           echo "✓ ECS service updated"
 
 # Workflows define the order in which jobs run
 workflows:
@@ -131,14 +106,7 @@ workflows:
     jobs:
       - test
       
-      # Uncomment the deployment job you want to use:
-      # - deploy-to-aws:
-      #     requires:
-      #       - test
-      #     filters:
-      #       branches:
-      #         only: main
-      
+      # Uncomment to deploy to GCP Cloud Run (OPTION 1):
       # - deploy-to-gcp:
       #     requires:
       #       - test
@@ -146,10 +114,10 @@ workflows:
       #       branches:
       #         only: main
       
-      # - deploy-to-azure:
+      # Uncomment to deploy to AWS ECS (OPTION 2):
+      # - deploy-to-ecs:
       #     requires:
       #       - test
       #     filters:
       #       branches:
       #         only: main
-

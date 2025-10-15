@@ -42,32 +42,36 @@ Five deployment configurations in the `examples/` folder - pick the one that fit
 
 ## ☁️ Deployment (Optional)
 
-The default config just runs tests. Want to deploy? Pick one based on your experience:
+The default config just runs tests. Want to deploy? We have two options:
 
-### ⭐ Easiest (Recommended for Getting Started)
-```bash
-cp examples/deploy-to-docker.yml .circleci/config.yml          # Docker Hub
-```
+### ⭐ Easy: Uncomment in Main Config
 
-### ⭐⭐ Easy (If You Have Cloud Experience)
-```bash
-cp examples/deploy-to-gcp.yml .circleci/config.yml             # Google Cloud Run
-```
+Open `.circleci/config.yml` and uncomment ONE deployment option:
 
-### ⭐⭐⭐ Intermediate (Requires Cloud Setup)
-```bash
-cp examples/deploy-to-azure-container.yml .circleci/config.yml # Azure Container Instances
-cp examples/deploy-to-aws-ecs.yml .circleci/config.yml         # AWS ECS
-```
+**Option 1: Google Cloud Run** (Recommended - Free Tier)
+- Best for hackathons with generous free tier
+- Uses CircleCI Cloud Run orb for easy deployment
+- Uncomment the `deploy-to-gcp` job and workflow section
+- Set env vars: `GCP_PROJECT_ID`, `GCP_REGION`, `GCLOUD_SERVICE_KEY`
 
-### ⭐⭐⭐⭐ Advanced (Requires Kubernetes Knowledge)
-```bash
-cp examples/deploy-to-aws-eks.yml .circleci/config.yml         # AWS EKS (Kubernetes)
-```
+**Option 2: AWS ECS** (Container Service)
+- Popular AWS container service with free tier
+- Uncomment the `deploy-to-ecs` job and workflow section
+- Set env vars: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_ACCOUNT_ID`, `AWS_REGION`, `AWS_ECS_CLUSTER`, `AWS_ECS_SERVICE`
 
-Then: Set environment variables in CircleCI (Project Settings → Environment Variables) and push to `main`.
+Then push to `main` and watch it deploy! 🚀
 
-**Need Lambda, Functions, or other services?** Check [CircleCI deployment docs](https://circleci.com/docs/deployment-overview/).
+### ⭐⭐⭐ Advanced: Copy from Examples
+
+For advanced deployments, copy jobs from `examples/` folder into your config:
+
+- **Docker Hub** - `examples/deploy-to-docker.yml` - Simplest container registry
+- **AWS EKS** - `examples/deploy-to-aws-eks.yml` - Kubernetes on AWS
+- **Azure Container Instances** - `examples/deploy-to-azure-container.yml` - Azure containers
+
+Each example file has instructions on how to copy it into your main config.
+
+**Need other services?** Check [CircleCI deployment docs](https://circleci.com/docs/deployment-overview/).
 
 ---
 

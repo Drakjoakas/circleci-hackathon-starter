@@ -42,32 +42,36 @@ Cinco configuraciones de despliegue en la carpeta `examples/` - elige la que se 
 
 ## ☁️ Despliegue (Opcional)
 
-La configuración predeterminada solo ejecuta pruebas. ¿Quieres desplegar? Elige uno según tu experiencia:
+La configuración predeterminada solo ejecuta pruebas. ¿Quieres desplegar? Tenemos dos opciones:
 
-### ⭐ Más Fácil (Recomendado para Empezar)
-```bash
-cp examples/deploy-to-docker.yml .circleci/config.yml          # Docker Hub
-```
+### ⭐ Fácil: Descomenta en la Configuración Principal
 
-### ⭐⭐ Fácil (Si Tienes Experiencia con la Nube)
-```bash
-cp examples/deploy-to-gcp.yml .circleci/config.yml             # Google Cloud Run
-```
+Abre `.circleci/config.yml` y descomenta UNA opción de despliegue:
 
-### ⭐⭐⭐ Intermedio (Requiere Configuración de Nube)
-```bash
-cp examples/deploy-to-azure-container.yml .circleci/config.yml # Azure Container Instances
-cp examples/deploy-to-aws-ecs.yml .circleci/config.yml         # AWS ECS
-```
+**Opción 1: Google Cloud Run** (Recomendado - Nivel Gratuito)
+- Mejor para hackathons con nivel gratuito generoso
+- Usa el orb de CircleCI Cloud Run para despliegue fácil
+- Descomenta el job `deploy-to-gcp` y la sección de workflow
+- Configura variables de entorno: `GCP_PROJECT_ID`, `GCP_REGION`, `GCLOUD_SERVICE_KEY`
 
-### ⭐⭐⭐⭐ Avanzado (Requiere Conocimiento de Kubernetes)
-```bash
-cp examples/deploy-to-aws-eks.yml .circleci/config.yml         # AWS EKS (Kubernetes)
-```
+**Opción 2: AWS ECS** (Servicio de Contenedores)
+- Popular servicio de contenedores AWS con nivel gratuito
+- Descomenta el job `deploy-to-ecs` y la sección de workflow
+- Configura variables de entorno: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_ACCOUNT_ID`, `AWS_REGION`, `AWS_ECS_CLUSTER`, `AWS_ECS_SERVICE`
 
-Luego: Configura variables de entorno en CircleCI (Configuración del Proyecto → Variables de Entorno) y sube a `main`.
+¡Luego sube a `main` y observa cómo se despliega! 🚀
 
-**¿Necesitas Lambda, Functions u otros servicios?** Consulta la [documentación de despliegue de CircleCI](https://circleci.com/docs/deployment-overview/).
+### ⭐⭐⭐ Avanzado: Copia de Ejemplos
+
+Para despliegues avanzados, copia jobs de la carpeta `examples/` a tu configuración:
+
+- **Docker Hub** - `examples/deploy-to-docker.yml` - Registro de contenedores más simple
+- **AWS EKS** - `examples/deploy-to-aws-eks.yml` - Kubernetes en AWS
+- **Azure Container Instances** - `examples/deploy-to-azure-container.yml` - Contenedores Azure
+
+Cada archivo de ejemplo tiene instrucciones sobre cómo copiarlo a tu configuración principal.
+
+**¿Necesitas otros servicios?** Consulta la [documentación de despliegue de CircleCI](https://circleci.com/docs/deployment-overview/).
 
 ---
 
