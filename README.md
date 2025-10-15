@@ -31,7 +31,7 @@ Your first build should pass immediately with the default configuration!
 
 ### Deployment Examples
 
-Five deployment configurations in the `examples/` folder - pick the one that fits your project
+Two easy deployment options in the main config (just uncomment!) and three advanced examples in the `examples/` folder
 
 ### Helper Scripts
 
@@ -59,6 +59,41 @@ Open `.circleci/config.yml` and uncomment ONE deployment option:
 - Uncomment the `deploy-to-ecs` job and workflow section
 - Set env vars: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_ACCOUNT_ID`, `AWS_REGION`, `AWS_ECS_CLUSTER`, `AWS_ECS_SERVICE`
 
+### 📋 How to Set Environment Variables in CircleCI
+
+1. Go to https://app.circleci.com/projects
+2. Find your project and click the three dots (⋯) next to it
+3. Select **"Project Settings"**
+4. Click **"Environment Variables"** in the left sidebar
+5. Click **"Add Environment Variable"**
+6. Enter the variable name (e.g., `GCP_PROJECT_ID`) and its value
+7. Click **"Add Variable"**
+8. Repeat for all required variables
+
+**Important**: Environment variables are secret - once added, you can't view their values again!
+
+### ☁️ Cloud Provider Setup
+
+Before deploying, you need to set up your cloud provider:
+
+**Google Cloud Run** (Recommended for Hackathons - Quick Setup):
+1. Create a GCP project at https://console.cloud.google.com/
+2. Enable APIs: Cloud Run API and Cloud Build API
+3. Create a service account with roles: "Cloud Run Admin" and "Cloud Build Editor"
+4. Download the JSON key file
+5. Base64 encode it: `cat key.json | base64 -w 0` (Linux) or `base64 -i key.json` (Mac)
+6. Use the base64 string as your `GCLOUD_SERVICE_KEY` in CircleCI
+
+**AWS ECS** (Requires More Setup):
+1. Create an ECR repository named `hackathon-app` in AWS Console
+2. Create an ECS cluster (Fargate or EC2)
+3. Create a task definition for your app
+4. Create an ECS service using your task definition
+5. Find your AWS Account ID: AWS Console → Click your account name in top-right → Copy the 12-digit number
+6. Add all required environment variables to CircleCI
+
+**First time deploying to the cloud?** We recommend Cloud Run - it has the quickest setup!
+
 Then push to `main` and watch it deploy! 🚀
 
 ### ⭐⭐⭐ Advanced: Copy from Examples
@@ -72,6 +107,21 @@ For advanced deployments, copy jobs from `examples/` folder into your config:
 Each example file has instructions on how to copy it into your main config.
 
 **Need other services?** Check [CircleCI deployment docs](https://circleci.com/docs/deployment-overview/).
+
+### ✅ Verifying Your Deployment
+
+**How to know if deployment succeeded:**
+
+1. **Check CircleCI Dashboard**: All jobs should be green ✓
+2. **Check the logs**: 
+   - **Cloud Run**: Look for the service URL in the last line (e.g., `https://hackathon-app-xyz.run.app`)
+   - **AWS ECS**: Look for "✓ ECS service updated" message
+3. **Test your app**: Visit the URL or check your cloud provider console
+
+**Troubleshooting**:
+- ❌ Red build? Click on it to see error logs
+- 🔑 Authentication errors? Double-check your environment variables
+- ❓ Need help? Visit the CircleCI booth!
 
 ---
 

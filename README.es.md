@@ -31,7 +31,7 @@ Pon tu proyecto en marcha en 5 minutos:
 
 ### Ejemplos de Despliegue
 
-Cinco configuraciones de despliegue en la carpeta `examples/` - elige la que se ajuste a tu proyecto
+Dos opciones fáciles de despliegue en la configuración principal (¡solo descomenta!) y tres ejemplos avanzados en la carpeta `examples/`
 
 ### Scripts de Ayuda
 
@@ -59,6 +59,41 @@ Abre `.circleci/config.yml` y descomenta UNA opción de despliegue:
 - Descomenta el job `deploy-to-ecs` y la sección de workflow
 - Configura variables de entorno: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_ACCOUNT_ID`, `AWS_REGION`, `AWS_ECS_CLUSTER`, `AWS_ECS_SERVICE`
 
+### 📋 Cómo Configurar Variables de Entorno en CircleCI
+
+1. Ve a https://app.circleci.com/projects
+2. Encuentra tu proyecto y haz clic en los tres puntos (⋯) junto a él
+3. Selecciona **"Project Settings"** (Configuración del Proyecto)
+4. Haz clic en **"Environment Variables"** (Variables de Entorno) en la barra lateral izquierda
+5. Haz clic en **"Add Environment Variable"** (Agregar Variable de Entorno)
+6. Ingresa el nombre de la variable (ej., `GCP_PROJECT_ID`) y su valor
+7. Haz clic en **"Add Variable"** (Agregar Variable)
+8. Repite para todas las variables requeridas
+
+**Importante**: Las variables de entorno son secretas - ¡una vez agregadas, no podrás ver sus valores nuevamente!
+
+### ☁️ Configuración del Proveedor de Nube
+
+Antes de desplegar, necesitas configurar tu proveedor de nube:
+
+**Google Cloud Run** (Recomendado para Hackathons - Configuración Rápida):
+1. Crea un proyecto GCP en https://console.cloud.google.com/
+2. Habilita APIs: Cloud Run API y Cloud Build API
+3. Crea una cuenta de servicio con roles: "Cloud Run Admin" y "Cloud Build Editor"
+4. Descarga el archivo de clave JSON
+5. Codifícalo en base64: `cat key.json | base64 -w 0` (Linux) o `base64 -i key.json` (Mac)
+6. Usa la cadena base64 como tu `GCLOUD_SERVICE_KEY` en CircleCI
+
+**AWS ECS** (Requiere Más Configuración):
+1. Crea un repositorio ECR llamado `hackathon-app` en la Consola de AWS
+2. Crea un clúster ECS (Fargate o EC2)
+3. Crea una definición de tarea para tu aplicación
+4. Crea un servicio ECS usando tu definición de tarea
+5. Encuentra tu AWS Account ID: Consola AWS → Haz clic en tu nombre de cuenta en la esquina superior derecha → Copia el número de 12 dígitos
+6. Agrega todas las variables de entorno requeridas a CircleCI
+
+**¿Primera vez desplegando en la nube?** ¡Recomendamos Cloud Run - tiene la configuración más rápida!
+
 ¡Luego sube a `main` y observa cómo se despliega! 🚀
 
 ### ⭐⭐⭐ Avanzado: Copia de Ejemplos
@@ -72,6 +107,21 @@ Para despliegues avanzados, copia jobs de la carpeta `examples/` a tu configurac
 Cada archivo de ejemplo tiene instrucciones sobre cómo copiarlo a tu configuración principal.
 
 **¿Necesitas otros servicios?** Consulta la [documentación de despliegue de CircleCI](https://circleci.com/docs/deployment-overview/).
+
+### ✅ Verificando Tu Despliegue
+
+**Cómo saber si el despliegue fue exitoso:**
+
+1. **Revisa el Dashboard de CircleCI**: Todos los jobs deben estar verdes ✓
+2. **Revisa los logs**: 
+   - **Cloud Run**: Busca la URL del servicio en la última línea (ej., `https://hackathon-app-xyz.run.app`)
+   - **AWS ECS**: Busca el mensaje "✓ ECS service updated"
+3. **Prueba tu app**: Visita la URL o revisa la consola de tu proveedor de nube
+
+**Solución de Problemas**:
+- ❌ ¿Build rojo? Haz clic para ver los logs de error
+- 🔑 ¿Errores de autenticación? Verifica tus variables de entorno
+- ❓ ¿Necesitas ayuda? ¡Visita el booth de CircleCI!
 
 ---
 

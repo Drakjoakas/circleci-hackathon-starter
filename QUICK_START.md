@@ -5,9 +5,10 @@
 ### 1. Fork the Repository
 ```bash
 # Using GitHub CLI
-gh repo fork YOUR_ORG/circleci-hackathon-starter
+gh repo fork AwesomeCICD/circleci-hackathon-starter
 
-# Or click "Fork" on GitHub
+# Or click "Fork" on GitHub at:
+# https://github.com/AwesomeCICD/circleci-hackathon-starter
 ```
 
 ### 2. Sign Up for CircleCI
