@@ -107,12 +107,12 @@ workflows:
       - test
       
       # Uncomment to deploy to GCP Cloud Run (OPTION 1):
-      # - deploy-to-gcp:
-      #     requires:
-      #       - test
-      #     filters:
-      #       branches:
-      #         only: main
+      - deploy-to-gcp:
+          requires:
+            - test
+          filters:
+            branches:
+              only: main
       
       # Uncomment to deploy to AWS ECS (OPTION 2):
       # - deploy-to-ecs:
