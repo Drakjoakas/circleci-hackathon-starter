@@ -43,28 +43,28 @@ jobs:
   # Uncomment this job to deploy to GCP Cloud Run using CircleCI orb
   # Required environment variables: GCP_PROJECT_ID, GCP_REGION, GCLOUD_SERVICE_KEY
   #
-  # deploy-to-gcp:
-  #   docker:
-  #     - image: cimg/base:stable
-  #   steps:
-  #     - checkout
-  #     - setup_remote_docker:
-  #         docker_layer_caching: true
-  #     - gcp-cloud-run/init
-  #     - run:
-  #         name: Build and push Docker image
-  #         command: |
-  #           echo $GCLOUD_SERVICE_KEY | base64 -d > ${HOME}/gcp-key.json
-  #           gcloud auth activate-service-account --key-file ${HOME}/gcp-key.json
-  #           gcloud --quiet config set project $GCP_PROJECT_ID
-  #           gcloud builds submit --tag gcr.io/$GCP_PROJECT_ID/hackathon-app
-  #           echo "✓ Docker image built and pushed to GCR"
-  #     - gcp-cloud-run/deploy:
-  #         service-name: hackathon-app
-  #         image: gcr.io/${GCP_PROJECT_ID}/hackathon-app
-  #         region: ${GCP_REGION}
-  #         unauthenticated: true
-  #         platform: managed
+  deploy-to-gcp:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - gcp-cloud-run/init
+      - run:
+          name: Build and push Docker image
+          command: |
+            echo $GCLOUD_SERVICE_KEY | base64 -d > ${HOME}/gcp-key.json
+            gcloud auth activate-service-account --key-file ${HOME}/gcp-key.json
+            gcloud --quiet config set project $GCP_PROJECT_ID
+            gcloud builds submit --tag gcr.io/$GCP_PROJECT_ID/hackathon-app
+            echo "✓ Docker image built and pushed to GCR"
+      - gcp-cloud-run/deploy:
+          service-name: hackathon-app
+          image: gcr.io/${GCP_PROJECT_ID}/hackathon-app
+          region: ${GCP_REGION}
+          unauthenticated: true
+          platform: managed
 
   # OPTION 2: Deploy to AWS ECS (Container Service - Free Tier Available)
   # Uncomment this job to deploy to AWS ECS
