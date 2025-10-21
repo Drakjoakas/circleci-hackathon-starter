@@ -52,6 +52,29 @@ jobs:
           docker_layer_caching: true
       - gcp-cloud-run/init
       - run:
+          name: Verify GCP environment variables
+          command: |
+            if [ -z "$GCLOUD_SERVICE_KEY" ]; then
+              echo "ERROR: GCLOUD_SERVICE_KEY environment variable is not set"
+              exit 1
+            else
+              echo "✓ GCLOUD_SERVICE_KEY is set (length: ${#GCLOUD_SERVICE_KEY} characters)"
+            fi
+
+            if [ -z "$GCP_PROJECT_ID" ]; then
+              echo "ERROR: GCP_PROJECT_ID environment variable is not set"
+              exit 1
+            else
+              echo "✓ GCP_PROJECT_ID is set: $GCP_PROJECT_ID"
+            fi
+
+            if [ -z "$GCP_REGION" ]; then
+              echo "ERROR: GCP_REGION environment variable is not set"
+              exit 1
+            else
+              echo "✓ GCP_REGION is set: $GCP_REGION"
+            fi
+      - run:
           name: Build and push Docker image
           command: |
             echo $GCLOUD_SERVICE_KEY | base64 -d > ${HOME}/gcp-key.json
